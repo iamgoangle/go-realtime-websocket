@@ -72,7 +72,12 @@ window.addEventListener("load", function(evt) {
             print("RESPONSE: " + evt.data);
         }
         ws.onerror = function(evt) {
-            print("ERROR: " + evt.data);
+						print("ERROR: " + JSON.stringify(evt));
+
+						if (!evt.data) {
+							alert("Redirect to login page")
+							location.href = "http://google.co.th"
+						}
         }
         return false;
     };
@@ -119,8 +124,11 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
-	// try error, the frontend should redirect
-	log.Println(r)
+	// TODO: try error, the frontend should redirect
+	// log.Println(r)
+	// http.Error(w, "Test API Gateway error", http.StatusUnauthorized)
+	// io.WriteString(w, "Hello, world!\n")
+	// return
 
 	// Upgrade initial GET request to a websocket
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -132,6 +140,10 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 
 	// Register our new client
 	clients[ws] = true
+
+	// TODO: Error something, but socket still open
+	// ws.WriteMessage(websocket.TextMessage, []byte(`{"status": "Unauthorized"}`))
+	// return
 
 	for {
 		var msg Message
